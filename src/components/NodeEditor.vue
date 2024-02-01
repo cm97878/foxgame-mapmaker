@@ -106,7 +106,7 @@ hr.solid {
     display:flex;
     justify-content:space-between;
     span {
-        margin: 0 8px;
+        margin-right: 8px;
     }
 }
 .currentData {
