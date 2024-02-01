@@ -4,13 +4,14 @@
             <OvermapPanel />
         </div>
         <div class="app_container general_outline">
-            
+            <NodeEditor />
         </div>
     </div>
 </template>
 
 
 <script setup lang="ts">
+import NodeEditor from './components/NodeEditor.vue';
 import OvermapPanel from './components/OvermapPanel.vue';
 
 

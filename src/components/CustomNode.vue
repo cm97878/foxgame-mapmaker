@@ -2,16 +2,17 @@
     <div class="node-boundary" >
         {{ data.areaName }}
     </div>
+    <Handle :id="props.id+','+1" type="source" :position="Position.Top" />
+    <Handle :id="props.id+','+2" type="source" :position="Position.Bottom" />
+    <Handle :id="props.id+','+3" type="source" :position="Position.Left" />
+    <Handle :id="props.id+','+4" type="source" :position="Position.Right" />
 </template>
 
 <script setup lang="ts">
-    import { useMapStore } from '@/stores/mapStore.js';
-    
-    const mapStore = useMapStore();
+    import { Handle, Position } from '@vue-flow/core'
 
     const name = "customNode";
     
-    //TODO: This wont work. Need to move all the tooltip stuff to the overmap panel, and do something with emitting events for mouse-overe'd nodes
     const props = defineProps({
         id: String,
         data: {
@@ -19,10 +20,7 @@
             required: true,
         },
         handles: Object
-    }) 
-
-    
-
+    })
 </script>
 
 <style>

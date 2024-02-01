@@ -6,8 +6,6 @@
             </template>
         </VueFlow>
     </div>
-    <NodeTooltip/>
-
 </template>
 
 <script setup lang="ts">
@@ -24,7 +22,7 @@ const { shift:shiftHeld } = useMagicKeys()
 
 
 const { nodesDraggable, onPaneReady, elementsSelectable, onNodeClick,  findNode,
-     addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode } = useVueFlow({ id:"map"});
+     addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode, onEdgeClick } = useVueFlow({ id:"map"});
 
 onPaneReady((instance) => {
     addEdges(mapStore.mapEdges);
@@ -43,12 +41,17 @@ onConnect((params) => addEdges(params))
 
 onNodeClick((node) => {
     const chosenNode = findNode(node.node.id)!;
+    mapStore.selectedNode = chosenNode;
+    console.log(mapStore.selectedNode)
+})
+onEdgeClick((edge) =>{
+    console.log(edge);
 })
 
 onPaneClick((event) => {
     if(shiftHeld.value) {
         let nodeLength = nodes.value.length;
-        
+
         if(vueFlowRef.value) {
             const { left, top } = vueFlowRef.value.getBoundingClientRect()
             const position = project({
@@ -57,7 +60,7 @@ onPaneClick((event) => {
             })
             
             let temp = {
-                id: ""+nodeLength+1,
+                id: (nodeLength+1).toString(),
                 type: 'custom',
                 position,
                 data: {

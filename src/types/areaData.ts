@@ -2,7 +2,7 @@
 
 export interface AreaData {
     areaSpecialID?: string;
-    customFunc?: Function;
+    customFunc?: string;
     areaName: string;
     zone: string;
     description: string;
