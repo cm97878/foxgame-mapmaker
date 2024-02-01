@@ -14,7 +14,7 @@ import CustomNode from './CustomNode.vue';
 import { useMapStore } from '@/stores/mapStore.js';
 import { VueFlow, useVueFlow, type GraphNode } from '@vue-flow/core';
 import { useMagicKeys, useMouse } from '@vueuse/core';
-import type { AreaData } from '@/types/areaData'
+import { Zone, type AreaData } from '@/types/areaData'
 
 const mapStore = useMapStore();
 
@@ -65,7 +65,7 @@ onPaneClick((event) => {
                 position,
                 data: {
                     areaName: "Node",
-                    zone: "",
+                    zone: Zone.FOREST,
                     description: "",
                     killCount: 0,
                     scoutThreshold: 0
