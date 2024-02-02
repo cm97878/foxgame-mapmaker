@@ -20,7 +20,6 @@ import { computed } from 'vue';
             type: Object,
             required: true,
         },
-        handles: Object
     })
 
     const handleSize = computed(() => ({ height: ".8em", width: ".8em" }))
