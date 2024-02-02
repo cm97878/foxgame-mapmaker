@@ -1,0 +1,51 @@
+[
+	{
+		"id": "6528841190286218",
+		"type": "custom",
+		"position": {
+			"x": 460.5073349095584,
+			"y": -238.0035231000877
+		},
+		"data": {
+			"areaSpecialID": "Home",
+			"customFunc": "function() {    console.log(\"worked\");}",
+			"areaName": "Node"
+		}
+	},
+	{
+		"id": "49368196738185977",
+		"type": "custom",
+		"position": {
+			"x": 264.5073349095584,
+			"y": -469.0035231000877
+		},
+		"data": {
+			"areaSpecialID": "asd",
+			"areaName": "Node2"
+		}
+	},
+	{
+		"id": "4937594784697078",
+		"type": "custom",
+		"position": {
+			"x": 724,
+			"y": -553
+		},
+		"data": {
+			"areaName": "Node4",
+			"zone": "forest"
+		}
+	},
+	{
+		"id": "3491158598019797",
+		"type": "custom",
+		"position": {
+			"x": 778,
+			"y": -303
+		},
+		"data": {
+			"areaName": "Node3",
+			"zone": "forest"
+		}
+	}
+]
