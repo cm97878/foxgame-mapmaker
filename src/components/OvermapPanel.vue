@@ -18,11 +18,11 @@ import { Zone, type AreaData } from '@/types/areaData'
 
 const mapStore = useMapStore();
 
-const { shift:shiftHeld } = useMagicKeys()
+const { shift:shiftHeld, alt:altHeld } = useMagicKeys()
 
 
 const { nodesDraggable, onPaneReady, elementsSelectable, onNodeClick,  findNode,
-     addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode, onEdgeClick } = useVueFlow({ id:"map"});
+     addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode, onEdgeClick, removeNodes, removeEdges } = useVueFlow({ id:"map"});
 
 onPaneReady((instance) => {
     addEdges(mapStore.mapEdges);
@@ -40,18 +40,24 @@ onPaneReady((instance) => {
 onConnect((params) => addEdges(params))
 
 onNodeClick((node) => {
-    const chosenNode = findNode(node.node.id)!;
-    mapStore.selectedNode = chosenNode;
-    console.log(mapStore.selectedNode)
+    if(altHeld.value) {
+        removeNodes(node.node);
+    }
+    else {
+        const chosenNode = findNode(node.node.id)!;
+        mapStore.selectedNode = chosenNode;
+        console.log(mapStore.selectedNode)
+    }
 })
+
 onEdgeClick((edge) =>{
-    console.log(edge);
+    if(altHeld.value) {
+        removeEdges(edge.edge);
+    }
 })
 
 onPaneClick((event) => {
     if(shiftHeld.value) {
-        let nodeLength = nodes.value.length;
-
         if(vueFlowRef.value) {
             const { left, top } = vueFlowRef.value.getBoundingClientRect()
             const position = project({
@@ -60,7 +66,7 @@ onPaneClick((event) => {
             })
             
             let temp = {
-                id: (nodeLength+1).toString(),
+                id: Math.random().toString().substring(2),
                 type: 'custom',
                 position,
                 data: {
@@ -71,6 +77,7 @@ onPaneClick((event) => {
                     scoutThreshold: 0
                 } as AreaData
             }
+            console.log(temp.id);
             addNodes([temp]);
         }
     }
