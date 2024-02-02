@@ -39,7 +39,6 @@
     </div>
     <button class="updateButton" @click="updateNode()">Update</button><br />
     <button class="updateButton" @click="deleteNode(mapStore.selectedNode)">Delete</button><br />
-    <button @click="console.log(edges)">test</button>
     
 </div>
 </template>
