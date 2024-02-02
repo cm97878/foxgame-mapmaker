@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-    import { useMapStore } from '@/stores/mapStore.js';
-    import { Zone } from '@/types/areaData';
     import { useVueFlow, type GraphNode } from '@vue-flow/core';
     import { ref, toRefs, watch } from 'vue';
+    import { Zone } from '../types/areaData';
+    import { useMapStore } from '../stores/mapStore';
 
     const mapStore = useMapStore();
     const zoneOptions = [Zone.FOREST, Zone.DEEP_FOREST, Zone.SPECIAL]

@@ -1,11 +1,17 @@
-import './assets/main.css'
-
 import { createApp } from 'vue'
 import App from './App.vue'
 import { createPinia } from 'pinia'
 
-const pinia = createPinia();
-const app = createApp(App);
+// import './style.css'
 
-app.use(pinia);
-app.mount('#vueWrapper');
+//import './demos/ipc'
+// If you want use Node.js, the`nodeIntegration` needs to be enabled in the Main process.
+// import './demos/node'
+const pinia = createPinia();
+
+createApp(App)
+    .use(pinia)
+  .mount('#vueWrapper')
+  .$nextTick(() => {
+    postMessage({ payload: 'removeLoading' }, '*')
+  })

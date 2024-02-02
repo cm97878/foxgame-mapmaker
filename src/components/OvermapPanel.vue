@@ -11,10 +11,12 @@
 <script setup lang="ts">
 import CustomNode from './CustomNode.vue';
 
-import { useMapStore } from '@/stores/mapStore.js';
+
 import { VueFlow, useVueFlow, type GraphNode } from '@vue-flow/core';
 import { useMagicKeys, useMouse } from '@vueuse/core';
-import { Zone, type AreaData } from '@/types/areaData'
+import { useMapStore } from '../stores/mapStore';
+import { Zone, AreaData } from '../types/areaData';
+
 
 const mapStore = useMapStore();
 
