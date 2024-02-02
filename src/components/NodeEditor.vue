@@ -38,7 +38,8 @@
         <label for="checkbox">{{ nodeDataUpdate.data.interactable }}</label><br/><br/>
     </div>
     <button class="updateButton" @click="updateNode()">Update</button><br />
-    <button class="updateButton" @click="deleteNode(mapStore.selectedNode)">Delete</button>
+    <button class="updateButton" @click="deleteNode(mapStore.selectedNode)">Delete</button><br />
+    <button @click="console.log(edges)">test</button>
     
 </div>
 </template>
@@ -52,7 +53,7 @@
     const mapStore = useMapStore();
     const zoneOptions = [Zone.FOREST, Zone.DEEP_FOREST, Zone.SPECIAL]
 
-    const { nodesDraggable, onPaneReady, elementsSelectable, onNodeClick,  findNode, addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode, onEdgeClick, removeNodes } = useVueFlow({ id:"map"});
+    const { nodesDraggable, onPaneReady, elementsSelectable, onNodeClick,  findNode, addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode, onEdgeClick, removeNodes, edges, getConnectedEdges, removeEdges } = useVueFlow({ id:"map"});
 
     const { selectedNode } = toRefs(mapStore);
     const nodeDataUpdate = ref({
@@ -71,7 +72,12 @@
 
     //i hate this a lot and i hope you hate it too. i fucked around with filters and object nonsense but tldr if i just do selectednode.data = nodedataupdate.data it just sets the pointer to the same spot and fucks everything up.
     const updateNode = function() {
-        selectedNode.value.id = nodeDataUpdate.value.id;
+        if(selectedNode.value.id != nodeDataUpdate.value.id) {
+            getConnectedEdges(selectedNode.value.id).forEach((edge) => {
+                removeEdges(edge);
+            })
+            selectedNode.value.id = nodeDataUpdate.value.id;
+        }
         selectedNode.value.data.areaSpecialID = nodeDataUpdate.value.data.areaSpecialID;
         selectedNode.value.data.customFunc = nodeDataUpdate.value.data.customFunc;
         selectedNode.value.data.areaName = nodeDataUpdate.value.data.areaName;
