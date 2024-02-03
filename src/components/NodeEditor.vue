@@ -39,21 +39,43 @@
     </div>
     <button class="updateButton" @click="updateNode()">Update</button><br />
     <button class="updateButton" @click="deleteNode(mapStore.selectedNode)">Delete</button><br />
-    <button @click="console.log(edges)">test</button>
+    <button @click="saveFile()">save</button><br />
+    <button @click="loadFile()">load</button>
     
 </div>
 </template>
 
 <script setup lang="ts">
     import { useMapStore } from '@/stores/mapStore.js';
-    import { Zone } from '@/types/areaData';
-    import { useVueFlow, type GraphNode } from '@vue-flow/core';
+    import { Zone, type AreaData } from '@/types/areaData';
+    import { useVueFlow, type GraphNode, type GraphEdge } from '@vue-flow/core';
     import { ref, toRefs, watch } from 'vue';
+    import { saveAs } from 'file-saver';
+    import testNodes from '@/assets/nodes.json';
+    const jsonNodes = testNodes;
 
     const mapStore = useMapStore();
     const zoneOptions = [Zone.FOREST, Zone.DEEP_FOREST, Zone.SPECIAL]
 
-    const { nodesDraggable, onPaneReady, elementsSelectable, onNodeClick,  findNode, addEdges, nodes, edgesUpdatable, nodesConnectable, setMinZoom, onConnect, addNodes, onPaneClick, project, vueFlowRef, selectionKeyCode, onEdgeClick, removeNodes, edges, getConnectedEdges, removeEdges } = useVueFlow({ id:"map"});
+    const { findNode, removeNodes, getConnectedEdges, removeEdges, getNodes, setNodes, getEdges, setEdges } = useVueFlow({ id:"map"});
+
+    //Realized after I worked it out this isnt needed, we can just add a clause to the customFunc handling that just processes an eval() on it. ugh.
+    // import testNodes from '@/assets/test.json';
+    // const jsonNodes = testNodes;
+    // const mapNodes = ref<GraphNode[]>([]);
+    
+    // jsonNodes.forEach((item) => {
+    //     let temp2 = {} as GraphNode;
+    //     temp2.id = item.id;
+    //     temp2.position = structuredClone(item.position);
+    //     temp2.type = item.type;
+    //     if(item.data.customFunc) {
+    //         item.data.customFunc = eval("(" + item.data.customFunc +")");
+    //     }
+    //     temp2.data = Object.assign({}, item.data);
+    //     mapNodes.value.push(temp2);
+    // })
+
 
     const { selectedNode } = toRefs(mapStore);
     const nodeDataUpdate = ref({
@@ -67,7 +89,8 @@
             killCount: 0,
             scoutThreshold: 0,
             interactable: false,
-        }
+            handles: []
+        },
     })
 
     //i hate this a lot and i hope you hate it too. i fucked around with filters and object nonsense but tldr if i just do selectednode.data = nodedataupdate.data it just sets the pointer to the same spot and fucks everything up.
@@ -103,6 +126,81 @@
 
     const deleteNode = function(node:GraphNode) {
         removeNodes(node, true);
+    }
+
+    const saveFile = function() {
+        //TODO: Needs to export edges for the nodes, and a data attribute to custom-add the handles in the main project
+
+        let edges = [] as object[];
+        getEdges.value.forEach((edge) => {
+            let source = edge.source;
+            let target = edge.target;
+            let sourceHandle = edge.sourceHandle;
+            let targetHandle = edge.targetHandle
+            let sourceNode = findNode(source);
+            let targetNode = findNode(target);
+            sourceNode?.data.handles.push(sourceHandle);
+            targetNode?.data.handles.push(targetHandle);
+            edges.push({
+                id: source+"-"+target, 
+                source,
+                target,
+
+                sourceHandle,
+                targetHandle,
+            });
+        })
+
+
+
+        let nodes = [] as GraphNode[]
+        getNodes.value.forEach((node) => {
+            let temp = {
+                id: node.id,
+                type: 'custom',
+                position: { x: node.position.x, y: node.position.y },
+                data: {
+
+                },
+            } as GraphNode
+            if(node.data.areaSpecialID) {
+                temp.data.areaSpecialID = node.data.areaSpecialID;
+            }
+            if(node.data.customFunc) {
+                temp.data.customFunc = node.data.customFunc.replace("\n", "");
+            }
+            if(node.data.areaName) {
+                temp.data.areaName = node.data.areaName;
+            }
+            if(node.data.zone) {
+                temp.data.zone = node.data.zone;
+            }
+            if(node.data.description) {
+                temp.data.description = node.data.description;
+            }
+            if(node.data.killCount) {
+                temp.data.killCount = node.data.killCount;
+            }
+            if(node.data.scoutThreshold) {
+                temp.data.scoutThreshold = node.data.scoutThreshold;
+            }
+            if(node.data.interactable) {
+                temp.data.interactable = node.data.interactable;
+            }
+            if(node.data.handles) {
+                temp.data.handles = node.data.handles;
+            }
+            nodes.push(temp)
+            console.log(nodes);
+        })
+
+        let file = new File([JSON.stringify({nodes, edges}, null, "\t")], "nodes.json", {type: "application/json"});
+        saveAs(file);
+    }
+
+    const loadFile = function() {
+        setNodes(testNodes.nodes);
+        setEdges(testNodes.edges);
     }
 </script>
 

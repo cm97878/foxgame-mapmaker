@@ -74,8 +74,9 @@ onPaneClick((event) => {
                     zone: Zone.FOREST,
                     description: "",
                     killCount: 0,
-                    scoutThreshold: 0
-                } as AreaData
+                    scoutThreshold: 0,
+                    handles: [],
+                } as AreaData,
             }
             console.log(temp.id);
             addNodes([temp]);

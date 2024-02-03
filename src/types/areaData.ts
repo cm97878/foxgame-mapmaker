@@ -7,6 +7,7 @@ export interface AreaData {
     killCount: number;
     scoutThreshold: number;
     interactable?: boolean;
+    handles: string[];
 }
 
 export enum SpecialAreaId {
