@@ -26,7 +26,7 @@
         ID: <input v-model="nodeDataUpdate.id"><br />
         Area Special ID: <input v-model="nodeDataUpdate.data.areaSpecialID"/><br/>
         <!--TODO: textareas appear ABOVE line intsead of hanging below it, idk how to fix that but it doesnt matter rn -->
-        Custom Function: <textarea v-model="nodeDataUpdate.data.customFunc" ></textarea><br/>
+        Custom Function: <input v-model="nodeDataUpdate.data.customFunc" /><br/>
         Name: <input v-model="nodeDataUpdate.data.areaName" placeholder="Node name"/><br/>
         Zone: <select v-model="nodeDataUpdate.data.zone"> 
             <option v-for="(item) in zoneOptions" :value="item" >{{ item }}</option>
@@ -51,13 +51,12 @@
     import { useVueFlow, type GraphNode, type GraphEdge } from '@vue-flow/core';
     import { ref, toRefs, watch } from 'vue';
     import { saveAs } from 'file-saver';
-    import testNodes from '@/assets/nodes.json';
-    const jsonNodes = testNodes;
+    import testNodes from '@/assets/overworldData.json';
 
     const mapStore = useMapStore();
     const zoneOptions = [Zone.FOREST, Zone.DEEP_FOREST, Zone.SPECIAL]
 
-    const { findNode, removeNodes, getConnectedEdges, removeEdges, getNodes, setNodes, getEdges, setEdges } = useVueFlow({ id:"map"});
+    const { findNode, removeNodes, getConnectedEdges, removeEdges, nodes, setNodes, edges, setEdges } = useVueFlow({ id:"map"});
 
     //Realized after I worked it out this isnt needed, we can just add a clause to the customFunc handling that just processes an eval() on it. ugh.
     // import testNodes from '@/assets/test.json';
@@ -131,8 +130,13 @@
     const saveFile = function() {
         //TODO: Needs to export edges for the nodes, and a data attribute to custom-add the handles in the main project
 
-        let edges = [] as object[];
-        getEdges.value.forEach((edge) => {
+        //clears the handles, otherwise it keeps making more if the map was imported
+        nodes.value.forEach((node) => {
+            node.data.handles = []
+        })
+
+        let edgeSave = [] as object[];
+        edges.value.forEach((edge) => {
             let source = edge.source;
             let target = edge.target;
             let sourceHandle = edge.sourceHandle;
@@ -141,7 +145,7 @@
             let targetNode = findNode(target);
             sourceNode?.data.handles.push(sourceHandle);
             targetNode?.data.handles.push(targetHandle);
-            edges.push({
+            edgeSave.push({
                 id: source+"-"+target, 
                 source,
                 target,
@@ -153,48 +157,31 @@
 
 
 
-        let nodes = [] as GraphNode[]
-        getNodes.value.forEach((node) => {
+        let nodeSave = [] as GraphNode[]
+        nodes.value.forEach((node) => {
             let temp = {
                 id: node.id,
                 type: 'custom',
                 position: { x: node.position.x, y: node.position.y },
                 data: {
 
-                },
+                } as AreaData,
             } as GraphNode
-            if(node.data.areaSpecialID) {
-                temp.data.areaSpecialID = node.data.areaSpecialID;
-            }
-            if(node.data.customFunc) {
-                temp.data.customFunc = node.data.customFunc.replace("\n", "");
-            }
-            if(node.data.areaName) {
-                temp.data.areaName = node.data.areaName;
-            }
-            if(node.data.zone) {
-                temp.data.zone = node.data.zone;
-            }
-            if(node.data.description) {
-                temp.data.description = node.data.description;
-            }
-            if(node.data.killCount) {
-                temp.data.killCount = node.data.killCount;
-            }
-            if(node.data.scoutThreshold) {
-                temp.data.scoutThreshold = node.data.scoutThreshold;
-            }
-            if(node.data.interactable) {
-                temp.data.interactable = node.data.interactable;
-            }
-            if(node.data.handles) {
-                temp.data.handles = node.data.handles;
-            }
-            nodes.push(temp)
+            temp.data.areaSpecialID = node.data.areaSpecialID;
+            temp.data.customFunc = node.data.customFunc;
+            temp.data.areaName = node.data.areaName;
+            temp.data.zone = node.data.zone;
+            temp.data.description = node.data.description;
+            temp.data.killCount = node.data.killCount;
+            temp.data.scoutThreshold = node.data.scoutThreshold;
+            temp.data.interactable = node.data.interactable;
+            temp.data.handles = node.data.handles;
+
+            nodeSave.push(temp)
             console.log(nodes);
         })
 
-        let file = new File([JSON.stringify({nodes, edges}, null, "\t")], "nodes.json", {type: "application/json"});
+        let file = new File([JSON.stringify({nodeSave, edgeSave}, null, "\t")], "overworldData.json", {type: "application/json"});
         saveAs(file);
     }
 
