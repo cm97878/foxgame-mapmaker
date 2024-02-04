@@ -54,7 +54,7 @@
     import testNodes from '@/assets/overworldData.json';
 
     const mapStore = useMapStore();
-    const zoneOptions = [Zone.FOREST, Zone.DEEP_FOREST, Zone.SPECIAL]
+    const zoneOptions = [Zone.FOREST, Zone.DEEP_FOREST, Zone.RIVERBANK, Zone.SPECIAL]
 
     const { findNode, removeNodes, getConnectedEdges, removeEdges, nodes, setNodes, edges, setEdges } = useVueFlow({ id:"map"});
 
@@ -178,7 +178,6 @@
             temp.data.handles = node.data.handles;
 
             nodeSave.push(temp)
-            console.log(nodes);
         })
 
         let file = new File([JSON.stringify({nodeSave, edgeSave}, null, "\t")], "overworldData.json", {type: "application/json"});
@@ -186,8 +185,8 @@
     }
 
     const loadFile = function() {
-        setNodes(testNodes.nodes);
-        setEdges(testNodes.edges);
+        setNodes(testNodes.nodeSave);
+        setEdges(testNodes.edgeSave);
     }
 </script>
 
